@@ -19,7 +19,6 @@ from flask import make_response
 from flask import jsonify
 
 from src import bert_run
-from src.trie import DFA
 
 
 app = Flask(__name__)
@@ -76,24 +75,15 @@ def predict():
         return make_response(jsonify(ret), 200)
 
     label_match, bert_prob = 0, 0
-    # try:
-    #     label_match, match_word = predict_unsafe_by_word(text)
-    #     log_result["unsafe_words"] = str(match_word)
+    #try:
+    start = time.time()
+    bert_prob = bert_model.predict(text)
+    end = time.time()
+    log_result["bert_pro"] = float(bert_prob)
+    log_result["bert_duration"] = round(end-start, 6)
     # except Exception as e:
-    #     info = "match model error, error:{}, audio_id:{}, text:{}"
+    #     info = "bert model error, error:{}, audio_id:{}, text:{}"
     #     logging.error(info.format(str(e), audio_id, str(text)))
-    # if label_match == 1:
-    #     logging.info(str(json.dumps(log_result, ensure_ascii=False)))
-    #     return make_response(jsonify(ret), 200)
-    try:
-        start = time.time()
-        bert_prob = bert_model.predict(text)
-        end = time.time()
-        log_result["bert_pro"] = float(bert_prob)
-        log_result["bert_duration"] = round(end-start, 6)
-    except Exception as e:
-        info = "bert model error, error:{}, audio_id:{}, text:{}"
-        logging.error(info.format(str(e), audio_id, str(text)))
     if bert_prob >= float(app.config.get("RATE")):
         logging.error(str(json.dumps(log_result, ensure_ascii=False)))
         return make_response(jsonify(ret), 200)
@@ -103,8 +93,6 @@ def predict():
     logging.info(str(json.dumps(log_result, ensure_ascii=False)))
 
     return make_response(jsonify(ret), 200)
-
-
 
 
 init_logger()

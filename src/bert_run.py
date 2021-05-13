@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 import os
+import sys
 import time
+import pathlib
 import torch
 import onnxruntime
 import numpy as np
-from __init__ import *
+abs_path = pathlib.Path(__file__).parent.absolute()
+sys.path.append(sys.path.append(abs_path))
 import torch.nn.functional as F
 from transformers import BertTokenizer
 
@@ -24,9 +27,9 @@ class Model(object):
         return session
 
     def build_tensor(self, s):
-        pad_size = self.config.get["PAD_SIZE"]
+        pad_size = self.config.get("PAD_SIZE")
         #device = self.config.device
-        inputs_dict = tokenizer.encode_plus(s,
+        inputs_dict = self.tokenizer.encode_plus(s,
                                             padding='max_length',
                                             truncation=True,
                                             max_length=pad_size,  
