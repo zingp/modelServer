@@ -85,7 +85,7 @@ def predict():
     #     info = "bert model error, error:{}, audio_id:{}, text:{}"
     #     logging.error(info.format(str(e), audio_id, str(text)))
     if bert_prob >= float(app.config.get("RATE")):
-        logging.error(str(json.dumps(log_result, ensure_ascii=False)))
+        logging.info(str(json.dumps(log_result, ensure_ascii=False)))
         return make_response(jsonify(ret), 200)
     
     ret["label"] = 0
