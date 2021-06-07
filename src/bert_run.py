@@ -28,7 +28,6 @@ class Model(object):
 
     def build_tensor(self, s):
         pad_size = self.config.get("PAD_SIZE")
-        #device = self.config.device
         inputs_dict = self.tokenizer.encode_plus(s,
                                             padding='max_length',
                                             truncation=True,
@@ -42,7 +41,7 @@ class Model(object):
         
     def predict(self, s):
         if len(s.strip()) == 0:
-            return 0, 0.0
+            return 0.0
         input_ids, attention_mask = self.build_tensor(s)
         out = self.session.run(None, {self.inp_name: input_ids.cpu().numpy(), 
                                 self.mask_name: attention_mask.cpu().numpy()})
